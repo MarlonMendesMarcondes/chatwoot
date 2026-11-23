@@ -67,8 +67,8 @@ RSpec.describe Channel::Whatsapp do
     let(:channel) { create(:channel_whatsapp) }
 
     before do
-      stub_request(:post, 'https://waba.360dialog.io/v1/configs/webhook')
-      stub_request(:get, 'https://waba.360dialog.io/v1/configs/templates')
+      stub_request(:post, 'https://waba-v2.360dialog.io/v1/configs/webhook')
+      stub_request(:get, 'https://waba-v2.360dialog.io/v1/configs/templates')
     end
 
     it_behaves_like 'reauthorizable'
@@ -238,7 +238,7 @@ RSpec.describe Channel::Whatsapp do
   end
 
   describe 'webhook_token' do
-    let(:webhook_url) { 'https://waba.360dialog.io/v1/configs/webhook' }
+    let(:webhook_url) { 'https://waba-v2.360dialog.io/v1/configs/webhook' }
     let(:channel) do
       existing = create(:channel_whatsapp, provider: 'default', sync_templates: false, validate_provider_config: false)
       existing.update_column(:provider_config, existing.provider_config.except('webhook_token')) # rubocop:disable Rails/SkipsModelValidations
@@ -440,12 +440,12 @@ RSpec.describe Channel::Whatsapp do
       expect(channel.voice_enabled?).to be true
     end
 
-    it 'returns false for default-provider channels (360dialog) even with calling_enabled' do
+    it 'returns true for default-provider channels (360dialog) with calling_enabled' do
       channel = create(:channel_whatsapp, account: account, provider: 'default',
                                           validate_provider_config: false, sync_templates: false)
-      channel.update!(provider_config: channel.provider_config.merge('source' => 'embedded_signup', 'calling_enabled' => true))
+      channel.update!(provider_config: channel.provider_config.merge('calling_enabled' => true))
 
-      expect(channel.voice_enabled?).to be false
+      expect(channel.voice_enabled?).to be true
     end
 
     it 'returns false when the channel_voice feature is disabled on the account' do

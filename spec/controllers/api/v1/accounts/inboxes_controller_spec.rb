@@ -749,8 +749,8 @@ RSpec.describe 'Inboxes API', type: :request do
       end
 
       it 'updates whatsapp inbox when administrator' do
-        stub_request(:post, 'https://waba.360dialog.io/v1/configs/webhook').to_return(status: 200, body: '', headers: {})
-        stub_request(:get, 'https://waba.360dialog.io/v1/configs/templates').to_return(status: 200, body: '', headers: {})
+        stub_request(:post, 'https://waba-v2.360dialog.io/v1/configs/webhook').to_return(status: 200, body: '', headers: {})
+        stub_request(:get, 'https://waba-v2.360dialog.io/v1/configs/templates').to_return(status: 200, body: '', headers: {})
         whatsapp_channel = create(:channel_whatsapp, account: account)
         whatsapp_inbox = create(:inbox, channel: whatsapp_channel, account: account)
         whatsapp_channel.prompt_reauthorization!

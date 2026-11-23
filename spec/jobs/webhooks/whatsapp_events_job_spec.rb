@@ -273,11 +273,11 @@ RSpec.describe Webhooks::WhatsappEventsJob do
   end
 
   context 'when default provider' do
-    it 'enqueue Whatsapp::IncomingMessageService' do
-      stub_request(:post, 'https://waba.360dialog.io/v1/configs/webhook')
+    it 'sends 360dialog payloads to the WhatsApp Cloud service' do
+      stub_request(:post, 'https://waba-v2.360dialog.io/v1/configs/webhook')
       channel.update(provider: 'default')
-      allow(Whatsapp::IncomingMessageService).to receive(:new).and_return(process_service)
-      expect(Whatsapp::IncomingMessageService).to receive(:new)
+      allow(Whatsapp::IncomingMessageWhatsappCloudService).to receive(:new).and_return(process_service)
+      expect(Whatsapp::IncomingMessageWhatsappCloudService).to receive(:new)
       job.perform_now(params)
     end
   end
