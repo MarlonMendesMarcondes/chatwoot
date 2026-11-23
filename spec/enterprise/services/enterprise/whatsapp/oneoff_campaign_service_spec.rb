@@ -198,6 +198,17 @@ RSpec.describe Enterprise::Whatsapp::OneoffCampaignService do
         .to have_enqueued_job(Campaigns::SendWhatsappBatchJob).with(campaign, 0)
     end
 
+    it 'starts recovery tracking for a 360dialog one-off campaign' do
+      dialog_channel = create(:channel_whatsapp, account: account, provider: 'default', validate_provider_config: false,
+                                                 sync_templates: false)
+      dialog_campaign = create(:campaign, inbox: dialog_channel.inbox, account: account,
+                                          audience: [{ type: 'Label', id: label.id }], template_params: template_params)
+
+      dialog_campaign.trigger!
+
+      expect(dialog_campaign.reload).to have_attributes(campaign_status: 'processing', whatsapp_cursor: 0)
+    end
+
     it 'does not repeat an accepted send when the response is lost and continues untouched contacts' do
       stub_const('Whatsapp::OneoffCampaignService::BATCH_SIZE', 2)
       contacts = create_list(:contact, 3, :with_phone_number, account: account)

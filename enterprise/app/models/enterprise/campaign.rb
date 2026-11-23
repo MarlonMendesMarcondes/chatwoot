@@ -11,7 +11,7 @@ module Enterprise::Campaign
   def starting_whatsapp_campaign?
     return false unless will_save_change_to_campaign_status? && processing? && one_off?
 
-    inbox.inbox_type == 'Whatsapp' && inbox.channel.provider == 'whatsapp_cloud'
+    inbox.inbox_type == 'Whatsapp' && %w[whatsapp_cloud default].include?(inbox.channel.provider)
   end
 
   def initialize_whatsapp_cursor

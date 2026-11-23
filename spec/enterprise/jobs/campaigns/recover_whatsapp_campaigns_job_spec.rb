@@ -44,10 +44,10 @@ RSpec.describe Campaigns::RecoverWhatsappCampaignsJob do
     expect(campaign.reload.whatsapp_cursor).to be_nil
   end
 
-  it 'does not enable recovery for unsupported WhatsApp providers' do
+  it 'enables recovery for 360dialog WhatsApp campaigns' do
     channel.update!(provider: 'default')
     campaign.processing!
 
-    expect(campaign.reload.whatsapp_cursor).to be_nil
+    expect(campaign.reload.whatsapp_cursor).to eq(0)
   end
 end
