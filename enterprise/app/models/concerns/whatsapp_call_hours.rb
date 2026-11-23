@@ -5,7 +5,15 @@ module Concerns::WhatsappCallHours
     business_hours_calls_enabled? && inbox.working_hours_enabled?
   end
 
+  # 360dialog exposes the calling status endpoint but not call hours, so its inboxes keep
+  # Meta's own call hours untouched instead of failing on a missing provider method.
+  def call_hours_supported?
+    provider == 'whatsapp_cloud'
+  end
+
   def apply_call_hours!
+    return unless call_hours_supported?
+
     if apply_call_hours? && weekly_operating_hours.empty?
       errors.add(:base, I18n.t('inbox.call_hours.closed_every_day'))
       raise ActiveRecord::RecordInvalid, self
@@ -15,6 +23,8 @@ module Concerns::WhatsappCallHours
   end
 
   def call_hours_match_whatsapp?
+    return true unless call_hours_supported?
+
     current = provider_service.calling_settings.dig('calling', 'call_hours') || {}
     desired = desired_call_hours
     return current['status'] != 'ENABLED' if desired['status'] == 'DISABLED'

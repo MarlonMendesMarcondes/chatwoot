@@ -1490,6 +1490,7 @@ export default {
         >
           <WhatsappCallingPage
             :inbox="inbox"
+            :call-hours-supported="isAWhatsAppCloudChannel"
             @open-business-hours="
               onTabChange(tabs.findIndex(tab => tab.key === 'business-hours'))
             "

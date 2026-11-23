@@ -24,6 +24,11 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  // Only WhatsApp Cloud exposes the call-hours endpoints; 360dialog only shares the calling status one.
+  callHoursSupported: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const emit = defineEmits(['openBusinessHours']);
@@ -111,7 +116,7 @@ const callHoursApplied = computed(
 
 const checkCallHours = async () => {
   callHoursMatch.value = null;
-  if (!callingEnabled.value) return;
+  if (!props.callHoursSupported || !callingEnabled.value) return;
   isCheckingCallHours.value = true;
   try {
     const { data } = await InboxesAPI.getWhatsappCallHours(props.inbox.id);
@@ -223,6 +228,7 @@ const applyInboxHours = async () => {
         </CallSettingsSection>
 
         <CallSettingsSection
+          v-if="callHoursSupported"
           :title="label('OUT_OF_HOURS.TITLE')"
           :description="label('OUT_OF_HOURS.DESCRIPTION')"
         >

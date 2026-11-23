@@ -36,6 +36,18 @@ RSpec.describe Channel::Whatsapp do
     { 'status' => status, 'timezone_id' => 'America/Los_Angeles', 'weekly_operating_hours' => weekly }
   end
 
+  describe '360dialog inboxes' do
+    let(:channel) do
+      create(:channel_whatsapp, account: account, provider: 'default', validate_provider_config: false, sync_templates: false)
+    end
+
+    it 'leaves call hours untouched because 360dialog exposes no call-hours endpoints' do
+      channel.apply_call_hours!
+
+      expect(channel.call_hours_match_whatsapp?).to be(true)
+    end
+  end
+
   describe '#apply_call_hours!' do
     it 'sends the open days in the inbox timezone, keeping the holidays WhatsApp holds' do
       stub_meta_settings('status' => 'ENABLED', 'holiday_schedule' => holidays)
